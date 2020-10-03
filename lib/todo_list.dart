@@ -70,6 +70,81 @@ class _TodoListState extends State<TodoList> {
             );
           },
         ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: [
+              DrawerHeader(
+                child: Text('SideBar Header'),
+                decoration: BoxDecoration(
+                  color: Colors.redAccent,
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              ListTile(
+                title: Text('Todo List'),
+                leading: FlutterLogo(),
+                selected: false,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              Divider(
+                color: Colors.grey,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              ListTile(
+                title: Text('one-line with trailing widget'),
+                trailing: Icon(Icons.more_vert),
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              Divider(
+                color: Colors.grey,
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+              ),
+              Card(
+                child: ListTile(
+                  title: Text('One-line ListTile'),
+                ),
+              ),
+              Card(
+                child: ListTile(
+                  title: Text('two-line ListTile'),
+                  subtitle: Text('subTitle line'),
+                  leading: Icon(Icons.thumbs_up_down),
+                  trailing: Icon(Icons.more_vert),
+                ),
+              ),
+              Divider(
+                color: Colors.blue,
+              ),
+              AboutListTile(
+                applicationName: 'Drawer Demo',
+                applicationIcon: FlutterLogo(),
+                applicationVersion: '1.0',
+                applicationLegalese: 'Free',
+              ),
+              Container(
+                color: Colors.lightBlue[200],
+                height: 50.0,
+                  child: FlatButton(
+                    child: Text('Close Drawer'),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
