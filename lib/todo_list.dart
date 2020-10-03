@@ -1,0 +1,100 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_todoList/blocs/todoBloc/bloc.dart';
+import 'package:flutter_todoList/todo_add.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class TodoList extends StatefulWidget {
+  @override
+  _TodoListState createState() => _TodoListState();
+}
+
+class _TodoListState extends State<TodoList> {
+  TodoBloc _todoBloc;
+
+  @override
+  void initState() {
+    super.initState();
+    _todoBloc = BlocProvider.of<TodoBloc>(context);
+    _todoBloc.add(TodoPageLoaded());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener(
+      bloc: _todoBloc,
+      listener: (BuildContext context, TodoState state) {},
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('Todo List'),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                // Navigator.push(context, MaterialPageRoute(
+                //     builder: (BuildContext context) =>
+                //         BlocProvider.value(
+                //           value: _todoBloc, child: TodoAdd(),)));
+              },
+            )
+          ],
+        ),
+        body: BlocBuilder(
+          bloc: _todoBloc,
+          builder: (BuildContext context, TodoState state) {
+            return Column(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height / 2,
+                  child: ListView.builder(
+                      itemCount: state.todoList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          title: Text(state.todoList[index].todo),
+                          onTap: () {
+                            _showDialog(state.todoList[index].todo,
+                              state.todoList[index].desc);
+                          },
+                          leading: Checkbox(
+                            value: state.todoList[index].checked,
+                            onChanged: (bool newValue) {
+                              _todoBloc.add(TodoListCheck(index: index));
+                            },
+                          ),
+                        );
+                      }
+                  ),
+                )
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  void _showDialog(String title, String description) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: description?.isEmpty ?? true
+            ? Text('부가적인 설명을 적지 않았습니다.')
+            : Text(description),
+          actions: [
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.pop(context, "OK");
+              },
+            )
+          ],
+        );
+      }
+    );
+  }
+
+}
