@@ -12,6 +12,8 @@ class TodoList extends StatefulWidget {
 class _TodoListState extends State<TodoList> {
   TodoBloc _todoBloc;
 
+  bool _visible = true;
+
   @override
   void initState() {
     super.initState();
@@ -37,38 +39,42 @@ class _TodoListState extends State<TodoList> {
                 //         BlocProvider.value(
                 //           value: _todoBloc, child: TodoAdd(),)));
               },
+            ),
+            IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                setState(() {
+                  _visible = !_visible;
+                });
+              },
             )
           ],
         ),
-        body: BlocBuilder(
-          bloc: _todoBloc,
-          builder: (BuildContext context, TodoState state) {
-            return Column(
-              children: [
-                Container(
-                  height: MediaQuery.of(context).size.height / 2,
-                  child: ListView.builder(
-                      itemCount: state.todoList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          title: Text(state.todoList[index].todo),
-                          onTap: () {
-                            _showDialog(state.todoList[index].todo,
-                              state.todoList[index].desc);
-                          },
-                          leading: Checkbox(
-                            value: state.todoList[index].checked,
-                            onChanged: (bool newValue) {
-                              _todoBloc.add(TodoListCheck(index: index));
-                            },
-                          ),
-                        );
-                      }
+        body: Column(
+          children: [
+            Visibility(
+              visible: _visible,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.amber,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                margin: const EdgeInsets.fromLTRB(0, 30, 0, 10),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(100, 20, 100, 20),
+                  child: Text(
+                    'search',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.redAccent,
+                        fontWeight: FontWeight.bold
+                    ),
                   ),
-                )
-              ],
-            );
-          },
+                ),
+              ),
+            ),
+            blocBody()
+          ],
         ),
         drawer: Drawer(
           child: ListView(
@@ -169,6 +175,39 @@ class _TodoListState extends State<TodoList> {
           ],
         );
       }
+    );
+  }
+
+  Widget blocBody() {
+    return BlocBuilder(
+      bloc: _todoBloc,
+      builder: (BuildContext context, TodoState state) {
+        return Column(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height / 2,
+              child: ListView.builder(
+                  itemCount: state.todoList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      title: Text(state.todoList[index].todo),
+                      onTap: () {
+                        _showDialog(state.todoList[index].todo,
+                            state.todoList[index].desc);
+                      },
+                      leading: Checkbox(
+                        value: state.todoList[index].checked,
+                        onChanged: (bool newValue) {
+                          _todoBloc.add(TodoListCheck(index: index));
+                        },
+                      ),
+                    );
+                  }
+              ),
+            )
+          ],
+        );
+      },
     );
   }
 
