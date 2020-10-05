@@ -34,10 +34,10 @@ class _TodoListState extends State<TodoList> {
             IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                // Navigator.push(context, MaterialPageRoute(
-                //     builder: (BuildContext context) =>
-                //         BlocProvider.value(
-                //           value: _todoBloc, child: TodoAdd(),)));
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (BuildContext context) =>
+                        BlocProvider.value(
+                          value: _todoBloc, child: TodoAdd(),)));
               },
             ),
             IconButton(
