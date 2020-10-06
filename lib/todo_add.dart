@@ -98,6 +98,43 @@ class _TodoAddState extends State<TodoAdd> {
                           fontWeight: FontWeight.bold,
                         )),
                   ),
+                  OutlineButton(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 2.5,
+                      height: 50,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Icon(Icons.calendar_today),
+                          Text(formattedDate),
+                        ],
+                      ),
+                    ),
+                    onPressed: () {
+                      // _selectDate(context, state);
+                    },
+                  ),
+                  SizedBox(
+                    height: 40,
+                  ),
+                  Expanded(
+                    child: Container(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 50),
+                    child: Center(
+                      child: RaisedButton(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0),
+                          side: BorderSide(color: Color(0xFF266DAC)),
+                        ),
+                        color: Color(0xFF266DAC),
+                        onPressed: () {
+
+                        },
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
