@@ -15,7 +15,8 @@ class _TodoListState extends State<TodoList> {
 
   bool _visible = true;
 
-  RefreshController _controller; //pull_to_refresh 컨트롤러
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -23,13 +24,17 @@ class _TodoListState extends State<TodoList> {
     _todoBloc = BlocProvider.of<TodoBloc>(context);
     _todoBloc.add(TodoPageLoaded());
 
-    _controller = new RefreshController();
   }
 
-  // void _onRefresh() async{
-  //   await Future.delayed(Duration(milliseconds: 1000));
-  //   _controller.refreshCompleted();
-  // }
+  void _onRefresh() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.refreshCompleted();
+  }
+
+  void _onLoading() async {
+    await Future.delayed(Duration(milliseconds: 1000));
+    _refreshController.loadComplete();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -195,11 +200,13 @@ class _TodoListState extends State<TodoList> {
       builder: (BuildContext context, TodoState state) {
         if (state.todoList.length > 0) {
           return Expanded(
-              child: new SmartRefresher(
+              child: SmartRefresher(
               enablePullDown: true,
-              enablePullUp: true,
-              controller: _controller,
-              // onRefresh: _onRefresh,
+              enablePullUp: false,
+              header: ClassicHeader(),
+              controller: _refreshController,
+              onRefresh: _onRefresh,
+              onLoading: _onLoading,
               child: Column(
                 children: [
                   Container(
