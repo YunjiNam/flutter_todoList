@@ -49,18 +49,6 @@ class _TodoListState extends State<TodoList> {
           title: Text('Todo List'),
           actions: [
             IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => BlocProvider.value(
-                              value: _todoBloc,
-                              child: TodoAdd(),
-                            )));
-              },
-            ),
-            IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
                 setState(() {
@@ -70,30 +58,52 @@ class _TodoListState extends State<TodoList> {
             )
           ],
         ),
-        body: Column(
-          children: [
-            Visibility(
-              visible: _visible,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.amber,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                margin: const EdgeInsets.fromLTRB(0, 30, 0, 10),
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(100, 20, 100, 20),
-                  child: Text(
-                    'search',
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Colors.redAccent,
-                        fontWeight: FontWeight.bold),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: FloatingActionButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (BuildContext context) => BlocProvider.value(
+                        value: _todoBloc,
+                        child: TodoAdd(),
+                      )));
+            },
+            backgroundColor: Color(0xFF266DAC),
+            mini: false,
+            child: Icon(Icons.edit),
+          ),
+        ),
+        body: Container(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                child: Visibility(
+                  visible: _visible,
+                  child: Container(
+                    padding: EdgeInsets.only(left: 20),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        width: 1,
+                        color: Color(0xFF266DAC),
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    margin: const EdgeInsets.fromLTRB(0, 30, 0, 10),
+                    child: TextField(
+                      decoration: InputDecoration(
+                          hintText: 'search',
+                        border: InputBorder.none,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-            blocBody()
-          ],
+              blocBody()
+            ],
+          ),
         ),
         drawer: Drawer(
           child: ListView(
@@ -181,7 +191,7 @@ class _TodoListState extends State<TodoList> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text(title),
-            content: description?.isEmpty ?? true
+            content: description == null
                 ? Text('부가적인 설명을 적지 않았습니다.')
                 : Text(description),
             actions: [
@@ -238,6 +248,7 @@ class _TodoListState extends State<TodoList> {
               )));
         } else {
           return new Center(
+
             child: CircularProgressIndicator(),
           );
         }
