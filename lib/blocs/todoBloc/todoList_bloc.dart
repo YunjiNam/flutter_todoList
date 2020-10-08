@@ -12,6 +12,11 @@ class TodoBloc extends Bloc<TodoListEvent, TodoState> {
       yield* _mapTodoPageLoadedToState();
     } else if (event is TodoListCheck) {
       yield* _mapTodoListCheckToState(event.index);
+    } else if (event is AddDateChanged) {
+      yield* _mapAddDateChangedToState(event.date);
+    } else if (event is TodoAddPressed) {
+      yield* _mapTodoAddPressedToState(
+        event.id, event.todo, event.date, event.desc);
     }
   }
 
@@ -29,5 +34,19 @@ class TodoBloc extends Bloc<TodoListEvent, TodoState> {
     List<Todo> cTodoList = state.todoList;
     cTodoList[index] = currentTodo;
     yield state.update(todoList: cTodoList);
+  }
+
+  Stream<TodoState> _mapAddDateChangedToState(String date) async* {
+    yield state.update(date: date);
+  }
+
+  Stream<TodoState> _mapTodoAddPressedToState(
+      int id, String todo, String date, String desc) async* {
+    Todo newTodo =
+        Todo(id: id, todo: todo, date: date, desc: desc, checked: false);
+    List<Todo> currentTodo = state.todoList;
+    currentTodo.add(newTodo);
+
+    yield state.update(todoList: currentTodo);
   }
 }

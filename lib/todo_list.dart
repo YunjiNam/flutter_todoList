@@ -28,6 +28,8 @@ class _TodoListState extends State<TodoList> {
 
   void _onRefresh() async {
     await Future.delayed(Duration(milliseconds: 1000));
+    _todoBloc = BlocProvider.of<TodoBloc>(context);
+    _todoBloc.add(TodoPageLoaded());
     _refreshController.refreshCompleted();
   }
 
@@ -207,30 +209,32 @@ class _TodoListState extends State<TodoList> {
               controller: _refreshController,
               onRefresh: _onRefresh,
               onLoading: _onLoading,
-              child: Column(
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height / 2,
-                    child: ListView.builder(
-                        itemCount: state.todoList.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ListTile(
-                            title: Text(state.todoList[index].todo),
-                            onTap: () {
-                              _showDialog(state.todoList[index].todo,
-                                  state.todoList[index].desc);
-                            },
-                            leading: Checkbox(
-                              value: state.todoList[index].checked,
-                              onChanged: (bool newValue) {
-                                _todoBloc.add(TodoListCheck(index: index));
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: ListView.builder(
+                          itemCount: state.todoList.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              title: Text(state.todoList[index].todo),
+                              onTap: () {
+                                _showDialog(state.todoList[index].todo,
+                                    state.todoList[index].desc);
                               },
-                            ),
-                          );
-                        }),
-                  )
-                ],
-              // ignore: missing_return
+                              leading: Checkbox(
+                                value: state.todoList[index].checked,
+                                onChanged: (bool newValue) {
+                                  _todoBloc.add(TodoListCheck(index: index));
+                                },
+                              ),
+                            );
+                          }),
+                    )
+                  ],
+                // ignore: missing_return
+                ),
               )));
         } else {
           return new Center(
