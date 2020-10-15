@@ -29,6 +29,7 @@ class TodoBloc extends Bloc<TodoListEvent, TodoState> {
       id: state.todoList[index].id,
       todo: state.todoList[index].todo,
       date: state.todoList[index].date,
+      desc: state.todoList[index].desc,
       checked: state.todoList[index].checked == true ? false : true);
 
     List<Todo> cTodoList = state.todoList;

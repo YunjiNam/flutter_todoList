@@ -11,15 +11,33 @@ class TodoList extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoList> {
+
+  TextEditingController _searchTextController;
+  FocusNode _searchFocusNode;
+
   TodoBloc _todoBloc;
 
   bool _visible = true;
+  String _searchText;
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
+  void addSearchValue() {
+    _searchTextController.addListener(() {
+      setState(() {
+        _searchText = _searchTextController.text;
+      });
+      print(_searchText);
+    });
+  }
+
   @override
   void initState() {
+    _searchTextController = TextEditingController();
+    _searchFocusNode = FocusNode();
+    addSearchValue();
+
     super.initState();
     _todoBloc = BlocProvider.of<TodoBloc>(context);
     _todoBloc.add(TodoPageLoaded());
@@ -93,6 +111,7 @@ class _TodoListState extends State<TodoList> {
                     ),
                     margin: const EdgeInsets.fromLTRB(0, 30, 0, 10),
                     child: TextField(
+                      controller: _searchTextController,
                       decoration: InputDecoration(
                           hintText: 'search',
                         border: InputBorder.none,
@@ -227,19 +246,46 @@ class _TodoListState extends State<TodoList> {
                       child: ListView.builder(
                           itemCount: state.todoList.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return ListTile(
-                              title: Text(state.todoList[index].todo),
-                              onTap: () {
-                                _showDialog(state.todoList[index].todo,
-                                    state.todoList[index].desc);
-                              },
-                              leading: Checkbox(
-                                value: state.todoList[index].checked,
-                                onChanged: (bool newValue) {
-                                  _todoBloc.add(TodoListCheck(index: index));
-                                },
-                              ),
+                            final todo = Padding(
+                                padding: EdgeInsets.only(right: 15),
+                                child: ListTile(
+                                  title: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        state.todoList[index].todo,
+                                        style: TextStyle(
+                                          color: state.todoList[index].checked ? Colors.blueAccent : Colors.black,
+                                        ),
+                                      ),
+                                      Text(
+                                        state.todoList[index].date,
+                                        style: TextStyle(
+                                          color: state.todoList[index].checked ? Colors.blueAccent : Colors.grey,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    _showDialog(state.todoList[index].todo,
+                                        state.todoList[index].desc);
+                                  },
+                                  leading: Checkbox(
+                                    value: state.todoList[index].checked,
+                                    onChanged: (bool newValue) {
+                                      _todoBloc.add(TodoListCheck(index: index));
+                                    },
+                                  ),
+                                ),
                             );
+                            return _searchText == null || _searchText == ''
+                                ? todo
+                                : '${state.todoList[index].todo}'
+                                  .toLowerCase()
+                                  .contains(_searchText.toLowerCase())
+                                    ? todo
+                                    : null;
                           }),
                     )
                   ],

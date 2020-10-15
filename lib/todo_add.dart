@@ -16,6 +16,7 @@ class _TodoAddState extends State<TodoAdd> {
   TodoBloc _todoBloc;
 
   // todo 의 제목을 위한 컨트롤러, 설명을 위한 컨트롤러 그리고 내가 지정한 날짜를 위한 컨트롤
+
   TextEditingController todo = TextEditingController();
   TextEditingController description = TextEditingController();
   String selectDate;
@@ -70,9 +71,10 @@ class _TodoAddState extends State<TodoAdd> {
                             fontWeight: FontWeight.bold,
                           )),
                     ),
-                    //
+
                     // TextField 에 기본적으로 있는 border를 없애고 Container로 감싸주어
                     // richTextField 처럼 보이게 만들었다
+
                     Container(
                       height: MediaQuery.of(context).size.height * 0.2,
                       padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -114,7 +116,9 @@ class _TodoAddState extends State<TodoAdd> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Icon(Icons.calendar_today),
-                            Text(formattedDate),
+                            Text(selectDate == null || selectDate == ''
+                                ? formattedDate
+                                : '${selectDate.split('.')[0]}년 ${selectDate.split('.')[1]}월 ${selectDate.split('.')[2]}일'),
                           ],
                         ),
                       ),
@@ -129,13 +133,17 @@ class _TodoAddState extends State<TodoAdd> {
                     //   child: Container(),
                     // ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 50),
+                      padding: EdgeInsets.only(bottom: 10),
+                      child: Text('라벨',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          )),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 50),
                       child: Center(
                         child: CupertinoButton(
-                          // shape: RoundedRectangleBorder(
-                          //   borderRadius: new BorderRadius.circular(30.0),
-                          //   side: BorderSide(color: Color(0xFF266DAC)),
-                          // ),
                           color: Color(0xFF266DAC),
                           borderRadius: new BorderRadius.circular(30.0),
                           onPressed: () {
@@ -152,7 +160,7 @@ class _TodoAddState extends State<TodoAdd> {
                                   builder: (BuildContext context) {
                                     return AlertDialog(
                                       title: Text(
-                                          '할 일 섹션을 반드시 채워 주세요!',
+                                        '할 일 섹션을 반드시 채워 주세요!',
                                         style: TextStyle(fontSize: 18),
                                       ),
                                       //content: Text('Select button you want'),
@@ -169,20 +177,21 @@ class _TodoAddState extends State<TodoAdd> {
                             }
                           },
                           child: Center(
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.add),
-                                  Padding(padding: EdgeInsets.only(left: 5)),
-                                  Text(
-                                    '새로운 일정 추가하기',
-                                    style: TextStyle(
-                                      color: Colors.white, fontSize: 16,
-                                    ),
-                                  )
-                                ],
-                              ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.add),
+                                Padding(padding: EdgeInsets.only(left: 5)),
+                                Text(
+                                  '새로운 일정 추가하기',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -199,6 +208,7 @@ class _TodoAddState extends State<TodoAdd> {
 
   // 해당 메서드를 통하여 달력을 호출할 수가 있다.
   // 그리고 선택된 값으로 state 를 업데이트 해주는 작업이 필요하게 된다.
+
   Future<void> _selectDate(BuildContext context, TodoState state) async {
     DateTime d = await showDatePicker(
       context: context,
@@ -207,8 +217,7 @@ class _TodoAddState extends State<TodoAdd> {
       lastDate: DateTime(2050),
     );
 
-    selectDate = DateFormat('yyyy-MM-dd').format(d);
+    selectDate = DateFormat('yyyy.MM.dd').format(d);
     _todoBloc.add(AddDateChanged(date: selectDate));
   }
-
 }
