@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_todoList/blocs/todoBloc/bloc.dart';
@@ -11,7 +13,6 @@ class TodoList extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoList> {
-
   TextEditingController _searchTextController;
   FocusNode _searchFocusNode;
 
@@ -19,6 +20,13 @@ class _TodoListState extends State<TodoList> {
 
   bool _visible = true;
   String _searchText;
+
+  // animated box properties
+  double _width = 50;
+  double _height = 50;
+  Color _color = Colors.green;
+  BorderRadiusGeometry _borderRadius = BorderRadius.circular(8);
+  bool _showtext = false;
 
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
@@ -41,7 +49,6 @@ class _TodoListState extends State<TodoList> {
     super.initState();
     _todoBloc = BlocProvider.of<TodoBloc>(context);
     _todoBloc.add(TodoPageLoaded());
-
   }
 
   void _onRefresh() async {
@@ -84,14 +91,41 @@ class _TodoListState extends State<TodoList> {
                   context,
                   MaterialPageRoute(
                       builder: (BuildContext context) => BlocProvider.value(
-                        value: _todoBloc,
-                        child: TodoAdd(),
-                      )));
+                            value: _todoBloc,
+                            child: TodoAdd(),
+                          )));
             },
             backgroundColor: Color(0xFF266DAC),
             mini: false,
             child: Icon(Icons.edit),
           ),
+          // FloatingActionButton(
+          //   onPressed: () {
+          //     setState(() {
+          //       final random = Random();
+          //
+          //       _showtext = !_showtext;
+          //
+          //       _width = _width > 300 ? _width - 50 : _width + 50;
+          //
+          //       _color = Color.fromRGBO(random.nextInt(256),
+          //           random.nextInt(256), random.nextInt(256), 1);
+          //
+          //       _borderRadius = BorderRadius.circular(30);
+          //
+          //       // _width = random.nextInt(300).toDouble();
+          //       // _height = random.nextInt(300).toDouble();
+          //       //
+          //       // _color = Color.fromRGBO(random.nextInt(256),
+          //       //     random.nextInt(256), random.nextInt(256), 1);
+          //       //
+          //       // _borderRadius = BorderRadius.circular(random.nextInt(100).toDouble());
+          //     });
+          //   },
+          //   backgroundColor: Color(0xFF266DAC),
+          //   mini: false,
+          //   child: Icon(Icons.play_arrow),
+          // ),
         ),
         body: Container(
           child: Column(
@@ -113,14 +147,32 @@ class _TodoListState extends State<TodoList> {
                     child: TextField(
                       controller: _searchTextController,
                       decoration: InputDecoration(
-                          hintText: 'search',
+                        hintText: 'search',
                         border: InputBorder.none,
                       ),
                     ),
                   ),
                 ),
               ),
-              blocBody()
+              blocBody(),
+              // Center(
+              //   child: AnimatedContainer(
+              //     width: _width,
+              //     height: _height,
+              //     decoration: BoxDecoration(
+              //       color: _color,
+              //       borderRadius: _borderRadius,
+              //     ),
+              //     duration: Duration(seconds: 1),
+              //     curve: Curves.fastOutSlowIn,
+              //     child: Center(
+              //       child: Visibility(
+              //         visible: _showtext,
+              //         child: Text('hi'),
+              //       ),
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -141,6 +193,12 @@ class _TodoListState extends State<TodoList> {
                 title: Text('Todo List'),
                 leading: FlutterLogo(),
                 selected: false,
+                onTap: () {
+                  Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => TodoList()),
+                      (route) => false);
+                },
               ),
               Padding(
                 padding: EdgeInsets.only(top: 10),
@@ -152,8 +210,16 @@ class _TodoListState extends State<TodoList> {
                 padding: EdgeInsets.only(top: 10),
               ),
               ListTile(
-                title: Text('one-line with trailing widget'),
+                title: Text('Todo Add'),
+                leading: Icon(Icons.playlist_add),
                 trailing: Icon(Icons.more_vert),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TodoAdd()),
+                  );
+                },
               ),
               Padding(
                 padding: EdgeInsets.only(top: 10),
@@ -232,69 +298,74 @@ class _TodoListState extends State<TodoList> {
         if (state.todoList.length > 0) {
           return Expanded(
               child: SmartRefresher(
-              enablePullDown: true,
-              enablePullUp: false,
-              header: ClassicHeader(),
-              controller: _refreshController,
-              onRefresh: _onRefresh,
-              onLoading: _onLoading,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Container(
-                      height: MediaQuery.of(context).size.height / 2,
-                      child: ListView.builder(
-                          itemCount: state.todoList.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            final todo = Padding(
-                                padding: EdgeInsets.only(right: 15),
-                                child: ListTile(
-                                  title: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        state.todoList[index].todo,
-                                        style: TextStyle(
-                                          color: state.todoList[index].checked ? Colors.blueAccent : Colors.black,
+                  enablePullDown: true,
+                  enablePullUp: false,
+                  header: ClassicHeader(),
+                  controller: _refreshController,
+                  onRefresh: _onRefresh,
+                  onLoading: _onLoading,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height / 2,
+                          child: ListView.builder(
+                              itemCount: state.todoList.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                final todo = Padding(
+                                  padding: EdgeInsets.only(right: 15),
+                                  child: ListTile(
+                                    title: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          state.todoList[index].todo,
+                                          style: TextStyle(
+                                            color: state.todoList[index].checked
+                                                ? Colors.blueAccent
+                                                : Colors.black,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        state.todoList[index].date,
-                                        style: TextStyle(
-                                          color: state.todoList[index].checked ? Colors.blueAccent : Colors.grey,
-                                          fontSize: 12,
+                                        Text(
+                                          state.todoList[index].date,
+                                          style: TextStyle(
+                                            color: state.todoList[index].checked
+                                                ? Colors.blueAccent
+                                                : Colors.grey,
+                                            fontSize: 12,
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    _showDialog(state.todoList[index].todo,
-                                        state.todoList[index].desc);
-                                  },
-                                  leading: Checkbox(
-                                    value: state.todoList[index].checked,
-                                    onChanged: (bool newValue) {
-                                      _todoBloc.add(TodoListCheck(index: index));
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      _showDialog(state.todoList[index].todo,
+                                          state.todoList[index].desc);
                                     },
+                                    leading: Checkbox(
+                                      value: state.todoList[index].checked,
+                                      onChanged: (bool newValue) {
+                                        _todoBloc
+                                            .add(TodoListCheck(index: index));
+                                      },
+                                    ),
                                   ),
-                                ),
-                            );
-                            return _searchText == null || _searchText == ''
-                                ? todo
-                                : '${state.todoList[index].todo}'
-                                  .toLowerCase()
-                                  .contains(_searchText.toLowerCase())
+                                );
+                                return _searchText == null || _searchText == ''
                                     ? todo
-                                    : null;
-                          }),
-                    )
-                  ],
-                // ignore: missing_return
-                ),
-              )));
+                                    : '${state.todoList[index].todo}'
+                                            .toLowerCase()
+                                            .contains(_searchText.toLowerCase())
+                                        ? todo
+                                        : null;
+                              }),
+                        )
+                      ],
+                      // ignore: missing_return
+                    ),
+                  )));
         } else {
           return new Center(
-
             child: CircularProgressIndicator(),
           );
         }

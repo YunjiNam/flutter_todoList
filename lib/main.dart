@@ -32,7 +32,7 @@ class _TodoAppState extends State<TodoApp> {
 
         routes: {
           "/todoList": (BuildContext context) => TodoList(),
-          // "/todoAdd": (BuildContext context) => TodoAdd(),
+          "/todoAdd": (BuildContext context) => TodoAdd(),
         },
       ),
     );

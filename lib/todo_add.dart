@@ -24,6 +24,8 @@ class _TodoAddState extends State<TodoAdd> {
   // 받아온 DateTime 을 특정 형태로 바꾸는 방법
   String formattedDate = DateFormat('yyyy년 MM월 dd일').format(DateTime.now());
 
+  bool _checkLabel = false;
+
   @override
   void initState() {
     super.initState();
@@ -139,6 +141,45 @@ class _TodoAddState extends State<TodoAdd> {
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
                           )),
+                    ),
+                    Row(
+                      children: [
+                        OutlineButton(
+                          color: _checkLabel ? Colors.blue : null,
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            height: 50,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('중요'),
+                              ],
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _checkLabel = !_checkLabel;
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          width: 20,
+                        ),
+                        OutlineButton(
+                          child: Container(
+                            padding: EdgeInsets.all(10),
+                            height: 50,
+                            child: Center(
+                              child: Text('보통'),
+                            ),
+                          ),
+                          onPressed: () {
+                            // setState(() {
+                            //   _checkLabel = !_checkLabel;
+                            // });
+                          },
+                        ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(0, 20, 0, 50),
