@@ -29,6 +29,7 @@ dependencies:
   intl: ^0.16.1
   pull_to_refresh: ^1.1.6
   json_annotation: ^3.1.0
+  flutter_swiper: ^1.1.6
 
 
   # The following adds the Cupertino Icons font to your application.
